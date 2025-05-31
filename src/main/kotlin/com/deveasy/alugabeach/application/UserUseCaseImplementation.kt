@@ -2,18 +2,15 @@ package com.deveasy.alugabeach.application
 
 import com.deveasy.alugabeach.application.enums.Roles
 import com.deveasy.alugabeach.application.enums.StatusCode
+import com.deveasy.alugabeach.core.GenericPersistence
 import com.deveasy.alugabeach.core.UserUseCase
 import com.deveasy.alugabeach.domain.dto.CreateUserDTO
 import com.deveasy.alugabeach.domain.dto.ResponseCreateUserDTO
 import com.deveasy.alugabeach.domain.dto.ResponseUserDTO
-import com.deveasy.alugabeach.domain.mappers.GenericMapper
 import com.deveasy.alugabeach.domain.model.User
-import com.deveasy.alugabeach.infrastructure.model.UserEntity
-import com.deveasy.alugabeach.infrastructure.repository.UserRepository
 
 class UserUseCaseImplementation(
-    val userRepository: UserRepository,
-    val userMapper: GenericMapper<User, UserEntity>
+    val userRepository: GenericPersistence<User>,
 ): UserUseCase {
 
     override fun createUser(createUserDTO: CreateUserDTO): ResponseCreateUserDTO {
@@ -24,8 +21,7 @@ class UserUseCaseImplementation(
             role = Roles.CUSTOMER
         )
 
-        val userEntity = userMapper.toEntity(user)
-        userRepository.save(userEntity)
+        userRepository.create(user)
 
         return ResponseCreateUserDTO(
             StatusCode.CREATED.code,
@@ -34,9 +30,7 @@ class UserUseCaseImplementation(
     }
 
     override fun getAllUsers(): List<ResponseUserDTO> {
-        val allUsersEntity = userRepository.findAll()
-        val allUsers = allUsersEntity.map { userMapper.toDomain(it) }
-
+        val allUsers = userRepository.findAll()
         return allUsers.map { ResponseUserDTO(it.name, it.email) }
     }
 
