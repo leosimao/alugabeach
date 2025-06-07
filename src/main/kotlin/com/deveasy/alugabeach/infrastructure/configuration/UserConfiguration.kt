@@ -1,9 +1,9 @@
 package com.deveasy.alugabeach.infrastructure.configuration
 
 import com.deveasy.alugabeach.application.UserUseCaseImplementation
+import com.deveasy.alugabeach.core.GenericPersistence
 import com.deveasy.alugabeach.core.UserUseCase
-import com.deveasy.alugabeach.infrastructure.mappers.UserMapper
-import com.deveasy.alugabeach.infrastructure.repository.UserRepository
+import com.deveasy.alugabeach.domain.model.User
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Configuration
 class UserConfiguration {
 
     @Bean
-    fun userUseCaseImplementation(userRepository: UserRepository, userMapper: UserMapper): UserUseCase = UserUseCaseImplementation(
-        userRepository,
-        userMapper
+    fun userUseCaseImplementation(userPersistence: GenericPersistence<User>): UserUseCase = UserUseCaseImplementation(
+        userPersistence,
     )
 }
